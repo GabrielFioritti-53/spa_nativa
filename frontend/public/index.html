@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Usuarios</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Menú simple -->
+    <nav class="menu">
+        <h1>Sistema de Usuarios</h1>
+        <div class="botones-menu">
+            <button id="btn-lista" class="boton-menu">Listar Usuarios</button>
+            <button id="btn-crear" class="boton-menu">Crear Usuario</button>
+        </div>
+    </nav>
+
+    <!-- Contenido principal -->
+    <main class="contenido">
+        <!-- Vista de lista de usuarios -->
+        <div id="vista-lista" class="vista">
+            <h2>Lista de Usuarios</h2>
+            <button id="btn-refrescar" class="boton">Recargar Lista</button>
+            <div id="lista-usuarios" class="lista">
+                <!-- Los usuarios aparecerán aquí -->
+            </div>
+        </div>
+
+        <!-- Vista de formulario -->
+        <div id="vista-formulario" class="vista" style="display: none;">
+            <h2 id="titulo-formulario">Crear Usuario</h2>
+            <form id="form-usuario" class="formulario">
+                <div class="grupo-form">
+                    <label for="nombre">Nombre:</label>
+                    <input type="text" id="nombre" required>
+                </div>
+                
+                <div class="grupo-form">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" required>
+                </div>
+                
+                <div class="grupo-form">
+                    <label for="telefono">Teléfono:</label>
+                    <input type="text" id="telefono">
+                </div>
+                
+                <div class="botones-form">
+                    <button type="submit" class="boton">Guardar</button>
+                    <button type="button" id="btn-cancelar" class="boton cancelar">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
