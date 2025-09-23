@@ -1,8 +1,7 @@
 import Fastify from "fastify";
 import swagger from "./plugins/swagger.js";
-import autoLoad from "@fastify/autoload";
-import { fileURLToPath } from "node:url";
-import { dirname, join } from "node:path";
+import usuarioRoutes from "./routes/routes.js";
+
 /* Api Rest */
 
 export const usuarios = [
@@ -17,12 +16,7 @@ const fastify = Fastify({
 
 fastify.register(swagger);
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-fastify.register(autoLoad, {
-  dir: join(__dirname, "routes"),
-});
+fastify.register(usuarioRoutes);
 
 try {
   await fastify.listen({ host: "::", port: 3000 });
