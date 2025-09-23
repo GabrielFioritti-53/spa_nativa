@@ -16,6 +16,7 @@ async function listarUsuarios() {
     .join("");
 }
 
+/* Aqui debe haber un archivo fastify con las rutas del front y fuera otro con lo que se pida */
 async function crearUsuario(event) {
   event.preventDefault();
   const miForm = document.getElementById("miForm");
