@@ -5,9 +5,21 @@ import usuarioRoutes from "./routes/routes.js";
 /* Api Rest */
 
 export const usuarios = [
-  { nombre: "Paula", apellido: "Tomas" },
-  { nombre: "Pepe", apellido: "Sanchez" },
-  { nombre: "Juan", apellido: "Perez" },
+  {
+    id: 1,
+    nombre: "Paula",
+    email: "paula.tomas@email.com",
+  },
+  {
+    id: 2,
+    nombre: "Pepe",
+    email: "pepe.sanchez@email.com",
+  },
+  {
+    id: 3,
+    nombre: "Juan",
+    email: "juan.perez@email.com",
+  },
 ];
 
 const fastify = Fastify({
@@ -15,7 +27,6 @@ const fastify = Fastify({
 });
 
 fastify.register(swagger);
-
 fastify.register(usuarioRoutes);
 
 try {
