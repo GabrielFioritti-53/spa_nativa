@@ -1,7 +1,8 @@
 import Fastify from "fastify";
-import fastifyStatic from "@fastify/static";
-import { dirname, join } from "path";
 import swagger from "./plugins/swagger.js";
+import autoLoad from "@fastify/autoload";
+import { fileURLToPath } from "node:url";
+import { dirname, join } from "node:path";
 /* Api Rest */
 
 export const usuarios = [
@@ -14,20 +15,14 @@ const fastify = Fastify({
   logger: true,
 });
 
-const rutaPublic = join(dirname(process.argv[1]), "public");
-
 fastify.register(swagger);
-fastify.register(fastifyStatic, {
-  root: rutaPublic,
-  prefix: "/",
-});
 
-fastify.get("/usuarios", async function (req, res) {
-  res.sendFile("text/html");
-  return usuarios;
-});
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
-fastify.post("/usuarios", async function (req, res) {});
+fastify.register(autoLoad, {
+  dir: join(__dirname, "routes"),
+});
 
 try {
   await fastify.listen({ host: "::", port: 3000 });
