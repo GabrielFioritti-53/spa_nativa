@@ -1,9 +1,3 @@
-// usuarios hardcodeados
-let usuarios = [
-    { id: 1, nombre: "Juan Pérez", email: "juan@example.com", telefono: "123-456-7890" },
-    { id: 2, nombre: "María García", email: "maria@example.com", telefono: "098-765-4321" }
-];
-
 // Cuando la página carga
 document.addEventListener('DOMContentLoaded', function() {
     // Botones del menú
