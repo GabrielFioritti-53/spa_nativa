@@ -33,6 +33,9 @@ fastify.register(import('@fastify/cors'), {
   allowedHeaders: ['Content-Type', 'Authorization']
 });
 
+// Register formbody plugin to handle form data and JSON
+fastify.register(import('@fastify/formbody'));
+
 fastify.register(swagger);
 fastify.register(usuarioRoutes);
 
