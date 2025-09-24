@@ -13,7 +13,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node --watch ./frontend/server.js",
     "dev": "node --watch ./api/server.js",
-    "plugins": "npm install fastify@latest @fastify/sensible @fastify/swagger @fastify/swagger-ui pino@latest pino-pretty@latest @types/node --save-dev @fastify/autoload"
+    "plugins": "npm install fastify@latest @fastify/sensible @fastify/swagger @fastify/swagger-ui pino@latest pino-pretty@latest @types/node --save-dev @fastify/autoload @fastify/cors @fastify/formbody @fastify/static"
   },
   "keywords": [],
   "author": "",
