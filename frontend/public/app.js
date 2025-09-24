@@ -22,7 +22,6 @@ document.addEventListener('DOMContentLoaded', function() {
 // Función para hacer peticiones a la API
 async function fetchAPI(url, options = {}) {
     try {
-        // Only add Content-Type header if there's a body
         const headers = { ...options.headers };
         if (options.body) {
             headers['Content-Type'] = 'application/json';
@@ -34,7 +33,6 @@ async function fetchAPI(url, options = {}) {
         });
         
         if (!response.ok) {
-            // Intentar obtener el mensaje de error del servidor
             let errorMessage = `Error HTTP Estado: ${response.status}`;
             try {
                 const errorData = await response.json();
@@ -44,7 +42,7 @@ async function fetchAPI(url, options = {}) {
                     errorMessage = errorData.message;
                 }
             } catch (e) {
-                // Si no se puede parsear el JSON, usar el mensaje por defecto
+
             }
             
             const error = new Error(errorMessage);
@@ -55,7 +53,6 @@ async function fetchAPI(url, options = {}) {
         return await response.json();
     } catch (error) {
         console.error('API Error:', error);
-        // No mostrar el error aquí, dejarlo para las funciones que llaman
         throw error;
     }
 }
@@ -136,7 +133,7 @@ async function cargarUsuarios() {
             `;
         });
         
-        // Add success message
+        // Agregar mensaje
         const successDiv = document.createElement('div');
         successDiv.className = 'success-message';
         successDiv.innerHTML = `
@@ -212,14 +209,13 @@ async function guardarUsuario(event) {
         return;
     }
     
-    // Validate email format
+    // Validar formato de email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
         alert('Por favor ingresa un email válido');
         return;
     }
     
-    // Disable form while saving
     const form = document.getElementById('form-usuario');
     const saveButton = form.querySelector('button[type="submit"]');
     const originalText = saveButton.textContent;
@@ -253,7 +249,6 @@ async function guardarUsuario(event) {
         console.error('Error al guardar el usuario:', error);
         mostrarError('Error al guardar el usuario: ' + error.message);
     } finally {
-        // Re-enable form
         saveButton.textContent = originalText;
         saveButton.disabled = false;
     }
@@ -266,10 +261,8 @@ function mostrarMensajeExito(mensaje) {
     successDiv.className = 'success-message-temp';
     successDiv.innerHTML = `<p>✅ ${mensaje}</p>`;
     
-    // Insert at the top
     lista.insertBefore(successDiv, lista.firstChild);
     
-    // Remove after 3 seconds
     setTimeout(() => {
         if (successDiv.parentNode) {
             successDiv.parentNode.removeChild(successDiv);
@@ -277,7 +270,6 @@ function mostrarMensajeExito(mensaje) {
     }, 3000);
 }
 
-// Function to refresh data from API
 async function refrescarDatos() {
     await cargarUsuarios();
 }
