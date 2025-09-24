@@ -38,7 +38,7 @@ export default async function usuarioRoutes(fastify) {
         params: {
           type: "object",
           properties: {
-            id: { type: "number" },
+            id: { type: "string" },
           },
         },
         response: {
@@ -124,7 +124,7 @@ export default async function usuarioRoutes(fastify) {
         params: {
           type: "object",
           properties: {
-            id: { type: "number" },
+            id: { type: "string" },
           },
         },
         body: {
@@ -190,7 +190,7 @@ export default async function usuarioRoutes(fastify) {
         params: {
           type: "object",
           properties: {
-            id: { type: "number" },
+            id: { type: "string" },
           },
         },
         response: {

@@ -31,13 +31,28 @@ async function fetchAPI(url, options = {}) {
         });
         
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            // Intentar obtener el mensaje de error del servidor
+            let errorMessage = `HTTP error! status: ${response.status}`;
+            try {
+                const errorData = await response.json();
+                if (errorData.error) {
+                    errorMessage = errorData.error;
+                } else if (errorData.message) {
+                    errorMessage = errorData.message;
+                }
+            } catch (e) {
+                // Si no se puede parsear el JSON, usar el mensaje por defecto
+            }
+            
+            const error = new Error(errorMessage);
+            error.status = response.status;
+            throw error;
         }
         
         return await response.json();
     } catch (error) {
         console.error('API Error:', error);
-        mostrarError(`Error connecting to API: ${error.message}`);
+        // No mostrar el error aquí, dejarlo para las funciones que llaman
         throw error;
     }
 }
@@ -153,31 +168,32 @@ function editar(id) {
 
 // Eliminar usuario
 async function eliminar(id) {
-    if (!confirm(' Estás seguro de que deseas eliminar este usuario?')) {
+    const usuario = usuarios.find(u => u.id === id);
+    const nombreUsuario = usuario ? usuario.nombre : 'el usuario';
+    
+    if (!confirm(`¿Estás seguro de que deseas eliminar a ${nombreUsuario}?`)) {
         return;
     }
     
+    console.log(`Intentando eliminar usuario con ID: ${id}`);
+    
     try {
-        // For now, we'll just filter locally since the API doesn't have DELETE endpoint
-        // In a real scenario, you would make a DELETE request to /usuarios/:id
-        usuarios = usuarios.filter(u => u.id !== id);
+        // Usar la API real para eliminar el usuario
+        const response = await fetchAPI(`/usuarios/${id}`, { 
+            method: 'DELETE' 
+        });
         
-        // Update the UI immediately
-        const userElement = document.querySelector(`[data-id="${id}"]`);
-        if (userElement) {
-            userElement.remove();
-        }
+        console.log('Usuario eliminado exitosamente:', response);
         
-        // Show success message
-        mostrarMensajeExito('Usuario eliminado con éxito (solo local)');
+        // Mostrar mensaje de éxito con el nombre del usuario eliminado
+        mostrarMensajeExito(`Usuario "${response.usuarioEliminado.nombre}" eliminado correctamente`);
         
-        // Note: In a real API, you would do:
-        // await fetchAPI(`/usuarios/${id}`, { method: 'DELETE' });
-        // Then reload the list: cargarUsuarios();
+        // Recargar la lista desde la API para mostrar los cambios
+        cargarUsuarios();
         
     } catch (error) {
         console.error('Error deleting user:', error);
-        mostrarError('Error deleting user');
+        mostrarError('Error al eliminar el usuario: ' + error.message);
     }
 }
 
@@ -193,48 +209,46 @@ async function guardarUsuario(event) {
         return;
     }
     
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        alert('Por favor ingresa un email válido');
+        return;
+    }
+    
     // Disable form while saving
     const form = document.getElementById('form-usuario');
     const saveButton = form.querySelector('button[type="submit"]');
     const originalText = saveButton.textContent;
-    saveButton.textContent = 'Saving...';
+    saveButton.textContent = 'Guardando...';
     saveButton.disabled = true;
     
     try {
         if (usuarioEditandoId) {
-            // Edit existing user (local only for now)
-            const usuario = usuarios.find(u => u.id === usuarioEditandoId);
-            if (usuario) {
-                usuario.nombre = nombre;
-                usuario.email = email;
-                mostrarMensajeExito('Usuario actualizado con éxito (solo local)');
-            }
+            // Editar usuario existente usando la API
+            const response = await fetchAPI(`/usuarios/${usuarioEditandoId}`, {
+                method: 'PUT',
+                body: JSON.stringify({ nombre, email })
+            });
             
-            // Note: In a real API, you would do:
-            // await fetchAPI(`/usuarios/${usuarioEditandoId}`, {
-            //     method: 'PUT',
-            //     body: JSON.stringify({ nombre, email })
-            // });
+            mostrarMensajeExito(`Usuario "${nombre}" actualizado correctamente`);
             
         } else {
-            // Create new user (local only for now)
-            const nuevoId = usuarios.length > 0 ? Math.max(...usuarios.map(u => u.id)) + 1 : 1;
-            const nuevoUsuario = { id: nuevoId, nombre, email };
-            usuarios.push(nuevoUsuario);
-            mostrarMensajeExito('Usuario creado con éxito (solo local)');
+            // Crear nuevo usuario usando la API
+            const response = await fetchAPI('/usuarios', {
+                method: 'POST',
+                body: JSON.stringify({ nombre, email })
+            });
             
-            // Note: In a real API, you would do:
-            // const nuevoUsuario = await fetchAPI('/usuarios', {
-            //     method: 'POST',
-            //     body: JSON.stringify({ nombre, email })
-            // });
+            mostrarMensajeExito(`Usuario "${nombre}" creado correctamente con ID: ${response.id}`);
         }
         
+        // Recargar la lista desde la API para mostrar los cambios
         mostrarLista();
         
     } catch (error) {
         console.error('Error saving user:', error);
-        mostrarError('Error saving user');
+        mostrarError('Error al guardar el usuario: ' + error.message);
     } finally {
         // Re-enable form
         saveButton.textContent = originalText;
