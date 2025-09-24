@@ -1,76 +1,46 @@
-import { usuarios } from "../server.js";
+export let usuarios = [
+    { id: 1, nombre: "Paula", apellido: "Tomas", email: "paulatomas@gmail.com" },
+    { id: 2, nombre: "Benja", apellido: "Fioritti", email: "gfioritti@gmail.com" }
+];
 
-export default async function usuarioRoutes(fastify) {
-  // Ruta GET - Obtener todos los usuarios
-  fastify.get(
-    "/usuarios",
-    {
-      schema: {
-        tags: ["Usuarios"],
-        summary: "Obtener todos los usuarios",
-        response: {
-          200: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                id: { type: "number" },
-                nombre: { type: "string" },
-                email: { type: "string" },
-              },
-            },
-          },
-        },
-      },
-    },
-    async function (request, reply) {
-      // Aquí va la lógica de tu ruta
-      return usuarios;
+export default async function routes(fastify, options) {
+
+
+fastify.get("/usuarios", async () => usuarios);
+
+
+fastify.get("/usuarios/:id", async (request, reply) => {
+    const id = Number(request.params.id);
+    const usuario = usuarios.find(u => u.id === id);
+    if (!usuario) {
+        reply.code(404).send({ error: "Usuario no encontrado" });
     }
-  );
+    return usuario;
+});
 
-  // Ruta POST - Crear nuevo usuario
-  fastify.post(
-    "/usuarios",
-    {
-      schema: {
-        tags: ["Usuarios"],
-        summary: "Crear un nuevo usuario",
-        body: {
-          type: "object",
-          required: ["nombre", "email"],
-          properties: {
-            nombre: { type: "string" },
-            email: { type: "string", format: "email" },
-            edad: { type: "number" },
-          },
-        },
-        response: {
-          201: {
-            type: "object",
-            properties: {
-              mensaje: { type: "string" },
-              id: { type: "number" },
-            },
-          },
-        },
-      },
-    },
-    async function (request, reply) {
-      const { nombre, email, edad } = request.body;
+fastify.post("/usuarios", async (request, reply) => {
+    const nuevo = { id: usuarios.length ? usuarios[usuarios.length - 1].id + 1 : 1, ...request.body };
+    usuarios.push(nuevo);
+    return nuevo;
+});
 
-      // Lógica para crear usuario
-      const nuevoUsuario = {
-        id: usuarios.length + 1,
-        nombre,
-        email,
-        edad,
-      };
 
-      usuarios.push(nuevoUsuario);
-
-      reply.code(201);
-      return { mensaje: "Usuario creado", id: nuevoUsuario.id };
+fastify.put("/usuarios/:id", async (request, reply) => {
+    const id = Number(request.params.id);
+    const index = usuarios.findIndex(u => u.id === id);
+    if (index === -1) {
+        reply.code(404).send({ error: "Usuario no encontrado" });
     }
-  );
+    usuarios[index] = { id, ...request.body };
+    return usuarios[index];
+});
+
+fastify.delete("/usuarios/:id", async (request, reply) => {
+    const id = Number(request.params.id);
+    const index = usuarios.findIndex(u => u.id === id);
+    if (index === -1) return reply.code(404).send({ error: "Usuario no encontrado" });
+    usuarios.splice(index, 1);
+    return { message: "Usuario eliminado" };
+});
+
 }

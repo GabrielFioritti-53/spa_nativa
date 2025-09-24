@@ -1,3 +1,5 @@
+let usuarios = [];
+
 // Cuando la página carga
 document.addEventListener('DOMContentLoaded', function() {
     // Botones del menú
@@ -12,6 +14,17 @@ document.addEventListener('DOMContentLoaded', function() {
     // Mostrar lista al inicio
     mostrarLista();
 });
+
+async function obtenerUsuariosDelBackend() {
+    try {
+        const response = await fetch('http://localhost:3000/api/usuarios');
+        usuarios = await response.json();
+        mostrarLista();
+    } catch (error) {
+        console.log('Error al cargar usuarios:', error);
+        alert('No se pudieron cargar los usuarios del servidor');
+    }
+}
 
 // Mostrar lista de usuarios
 function mostrarLista() {

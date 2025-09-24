@@ -3,10 +3,9 @@ import fastifyStatic from "@fastify/static";
 import { fileURLToPath } from 'url';
 import path from 'path';
 
+const fastify = Fastify({ logger: true });
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-const fastify = Fastify({ logger: true });
 
 fastify.register(fastifyStatic, {
     root: path.join(__dirname, 'public'),
@@ -19,7 +18,7 @@ fastify.get('/', async (request, reply) => {
 
 const start = async () => {
     try {
-        await fastify.listen({ port: 4000, host: '0.0.0.0' });
+        await fastify.listen({ port: 4000});
         console.log('Frontend ejecutándose en http://localhost:4000');
     } catch (err) {
         fastify.log.error(err);

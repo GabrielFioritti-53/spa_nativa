@@ -1,22 +1,25 @@
 import Fastify from "fastify";
-import swagger from "./plugins/swagger.js";
-import usuarioRoutes from "./routes/routes.js";
+import cors from '@fastify/cors'
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
+import AutoLoad from "@fastify/autoload";
 
 /* Api Rest */
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
-export const usuarios = [
-  { nombre: "Paula", apellido: "Tomas" },
-  { nombre: "Pepe", apellido: "Sanchez" },
-  { nombre: "Juan", apellido: "Perez" },
-];
+const fastify = Fastify({ logger: true });
 
-const fastify = Fastify({
-  logger: true,
+await fastify.register(cors, {
+  origin: 'http://localhost:4000',
+  methods: ['GET', 'POST', 'PUT', 'DELETE']
 });
 
-fastify.register(swagger);
+// Rutas después
+await fastify.register(AutoLoad, {
+    dir: join(__dirname, "routes"),
+});
 
-fastify.register(usuarioRoutes);
 
 try {
   await fastify.listen({ host: "::", port: 3000 });
