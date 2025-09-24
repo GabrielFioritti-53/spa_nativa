@@ -22,11 +22,14 @@ document.addEventListener('DOMContentLoaded', function() {
 // Función para hacer peticiones a la API
 async function fetchAPI(url, options = {}) {
     try {
+        // Only add Content-Type header if there's a body
+        const headers = { ...options.headers };
+        if (options.body) {
+            headers['Content-Type'] = 'application/json';
+        }
+        
         const response = await fetch(`${API_BASE_URL}${url}`, {
-            headers: {
-                'Content-Type': 'application/json',
-                ...options.headers
-            },
+            headers,
             ...options
         });
         
