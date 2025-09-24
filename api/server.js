@@ -26,6 +26,13 @@ const fastify = Fastify({
   logger: true,
 });
 
+// Enable CORS for frontend connection
+fastify.register(import('@fastify/cors'), {
+  origin: ['http://localhost:4000', 'http://127.0.0.1:4000'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+});
+
 fastify.register(swagger);
 fastify.register(usuarioRoutes);
 
