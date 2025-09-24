@@ -10,9 +10,13 @@
     <!-- Menú simple -->
     <nav class="menu">
         <h1>Sistema de Usuarios</h1>
+        <div class="api-status" id="apiStatus">
+            <span class="status-indicator">API Conectada</span>
+        </div>
         <div class="botones-menu">
             <button id="btn-lista" class="boton-menu">Listar Usuarios</button>
             <button id="btn-crear" class="boton-menu">Crear Usuario</button>
+            <button id="btn-refresh" class="boton-menu refresh" onclick="refrescarDatos()">🔄 Actualizar</button>
         </div>
     </nav>
 
