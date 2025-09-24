@@ -22,17 +22,20 @@ document.addEventListener('DOMContentLoaded', function() {
 // Función para hacer peticiones a la API
 async function fetchAPI(url, options = {}) {
     try {
+        // Only add Content-Type header if there's a body
+        const headers = { ...options.headers };
+        if (options.body) {
+            headers['Content-Type'] = 'application/json';
+        }
+        
         const response = await fetch(`${API_BASE_URL}${url}`, {
-            headers: {
-                'Content-Type': 'application/json',
-                ...options.headers
-            },
+            headers,
             ...options
         });
         
         if (!response.ok) {
             // Intentar obtener el mensaje de error del servidor
-            let errorMessage = `HTTP error! status: ${response.status}`;
+            let errorMessage = `Error HTTP Estado: ${response.status}`;
             try {
                 const errorData = await response.json();
                 if (errorData.error) {
@@ -64,7 +67,7 @@ function mostrarError(mensaje) {
         <div class="error-message">
             <h3>⚠️ Error</h3>
             <p>${mensaje}</p>
-            <button onclick="cargarUsuarios()" class="boton">Retry</button>
+            <button onclick="cargarUsuarios()" class="boton">Reintentar</button>
         </div>
     `;
 }
@@ -75,7 +78,7 @@ function mostrarCargando() {
     lista.innerHTML = `
         <div class="loading-message">
             <div class="spinner"></div>
-            <p>Loading users from API...</p>
+            <p>Cargando Usuarios desde API...</p>
         </div>
     `;
 }
@@ -109,8 +112,8 @@ async function cargarUsuarios() {
         if (usuarios.length === 0) {
             lista.innerHTML = `
                 <div class="empty-message">
-                    <h3>No users found</h3>
-                    <p>Click "Crear Usuario" to add the first user.</p>
+                    <h3>Usuarios no encontrados</h3>
+                    <p>Haz clic en "Crear Usuario" para agregar el primer usuario.</p>
                 </div>
             `;
             return;
@@ -142,7 +145,7 @@ async function cargarUsuarios() {
         lista.insertBefore(successDiv, lista.firstChild);
         
     } catch (error) {
-        console.error('Error loading users:', error);
+        console.error('Error al cargar usuarios:', error);
     }
 }
 
@@ -151,7 +154,7 @@ function editar(id) {
     const usuario = usuarios.find(u => u.id === id);
     
     if (!usuario) {
-        mostrarError('User not found');
+        mostrarError('Usuario no encontrado');
         return;
     }
     
@@ -192,7 +195,7 @@ async function eliminar(id) {
         cargarUsuarios();
         
     } catch (error) {
-        console.error('Error deleting user:', error);
+        console.error('Error al tratar de eliminar el usuario:', error);
         mostrarError('Error al eliminar el usuario: ' + error.message);
     }
 }
@@ -247,7 +250,7 @@ async function guardarUsuario(event) {
         mostrarLista();
         
     } catch (error) {
-        console.error('Error saving user:', error);
+        console.error('Error al guardar el usuario:', error);
         mostrarError('Error al guardar el usuario: ' + error.message);
     } finally {
         // Re-enable form
